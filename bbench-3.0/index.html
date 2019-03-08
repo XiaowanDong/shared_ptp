@@ -1,0 +1,164 @@
+<!--
+ * Copyright (c) 2011-2013 The Regents of The University of Michigan
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met: redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer;
+ * redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution;
+ * neither the name of the copyright holders nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Author: Anthony Gutierrez (atgutier@umich.edu)
+-->
+
+<!DOCTYPE HTML>
+
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>University of Michigan - BBench 3.0</title>
+    <script type="text/javascript" src="bbench.js"></script>
+    <script type="text/javascript" src="forms.js"></script>
+</head>
+
+<body>
+    <img src="mich_engin.png" width="35%"/>
+    <h2>University of Michigan BBench Version 3.0</h2>
+
+    <!--
+        file input containing the URLs of all pages in the benchmark.
+        to include a page in the benchmark, simply include its relative
+        URL in the file, e.g., see the sites.txt file included with
+        BBench.
+    <b>Select File Containing Site URLs:</b>
+    <input type="file" id="files" name="SiteURLs" multiple />
+    -->
+
+    <script>
+        if (window.File && window.FileReader && window.FileList
+            && window.Blob) {
+            function handleFileSelect(evt) {
+                // FileList object containing all files
+                var files = evt.target.files;
+                for (var i = 0; f = files[i]; i++) {
+                    var reader = new FileReader();
+
+                    // read in the site URLs from the file and store
+                    // them in a global array.
+                    reader.onload = (
+                        function(theFile) {
+                            return function(e) {
+                                bbSiteURLs = e.target.result.split('\n');
+                                bbSiteURLs.pop();
+                            };
+                        }
+                    )(f);
+
+                    reader.readAsText(f);
+                }
+            }
+
+            //document.getElementById('files')
+            //        .addEventListener('change', handleFileSelect, false);
+        } else {
+            alert("Your browser does not support files.");
+        }
+		bbSiteURLs = ["/sites/amazon/www.amazon.com/index.html", "/sites/bbc/www.bbc.co.uk/index.html", 
+		"/sites/cnn/www.cnn.com/index.html", "/sites/craigslist/newyork.craigslist.org/index.html", 
+		"/sites/ebay/www.ebay.com/index.html", "/sites/espn/espn.go.com/index.html", 
+		"/sites/google/www.google.com/index.html", "/sites/msn/www.msn.com/index.html", 
+		"/sites/slashdot/slashdot.org/index.html", "/sites/twitter/twitter.com/index.html", 
+		"/sites/youtube/www.youtube.com/index.html"];
+		numIters = 100;
+		startTest(numIters, scrollDelay, scrollSize,
+                               pageDelay);
+    </script>
+
+    <form name="config_form">
+        <br />
+        <b>Number of iterations:</b>
+        <input type="text" name="numIterations" value="5" size="4"
+        onchange="setIters();">
+        <input type="button" value="-" name="iterMinusButton"
+        onClick="document.config_form.numIterations.value=numItersDec();
+        return true;">
+        <input type="button" value="+" name="iterPlusButton"
+        onClick="document.config_form.numIterations.value=numItersInc();
+        return true;">
+        (Number of times the page set is iterated through.)
+        <br/><br/>
+
+        <b>Scroll Delay (ms):</b>
+        <input type="text" name="scrollDelay" value="0" size="8"
+        onchange="setScrollDelay();">
+        <input type="button" value="-" name="scrollDelayMinusButton"
+        onClick="document.config_form.scrollDelay.value=scrollDelayDec();
+        return true;">
+        <input type="button" value="+" name="scrollDelayPlusButton"
+        onClick="document.config_form.scrollDelay.value=scrollDelayInc();
+        return true;">
+        (Number of milliseconds to pause before scrolling.)
+        <br/><br/>
+
+        <b>Scroll Size:</b>
+        <input type="text" name="scrollSize" value="500" size="8"
+        onchange="setScrollSize();">
+        <input type="button" value="-" name="scrollSizeMinusButton"
+        onClick="document.config_form.scrollSize.value=scrollSizeDec();
+        return true;">
+        <input type="button" value="+" name="scrollSizePlusButton"
+        onClick="document.config_form.scrollSize.value=scrollSizeInc();
+        return true;">
+        (Number of pixels to scroll.)
+        <br/><br/>
+
+        <b>Page Delay:</b>
+        <input type="text" name="pageDelay" value="0" size="8"
+        onchange="setPageDelay();">
+        <input type="button" value="-" name="pageDelayMinusButton"
+        onClick="document.config_form.pageDelay.value=pageDelayDec();
+        return true;">
+        <input type="button" value="+" name="pageDelayPlusButton"
+        onClick="document.config_form.pageDelay.value=pageDelayInc();
+        return true;">
+        (Number of milliseconds to pause before going to the next page.)
+    </form>
+
+	<!--
+    <p>
+        <b>Click on the start button to begin the benchmark.</b>
+    </p>
+    <button onclick="startTest(numIters, scrollDelay, scrollSize,
+                               pageDelay)">start</button>
+	-->
+
+    <p>
+        If you use BBench in your work please cite our
+        <a href="http://dx.doi.org/10.1109/IISWC.2011.6114205">
+        2011 IISWC paper</a>:<br/><br/>
+
+        A. Gutierrez, R.G. Dreslinksi, T.F. Wenisch, T. Mudge, A. Saidi,
+        C. Emmons, and N. Paver. Full-System Analysis and Characterization
+        of Interactive Smartphone Applications.
+        <i>IEEE International Symposium on Workload Characterization</i>,
+        2011.
+    </p>
+</body>
+</html>
